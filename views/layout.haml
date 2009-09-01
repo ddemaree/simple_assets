@@ -1,0 +1,21 @@
+!!! HTML5
+%html{:lang => "en"}
+	%head
+		%title Asset Manager
+		%link(href="/css/screen.css" type="text/css" rel="stylesheet" media="screen")
+		%script(type="text/javascript" src="/js/jquery.js")
+		%script(type="text/javascript" src="/js/application.js")
+	%body#assets
+		#container
+			.header.clearfix
+				%h1 Asset Managizzle
+				.nav
+					%ul
+						%li
+							%a(href="/") Assets
+						%li
+							%a(href="/assets/new") Upload
+			.section.main
+				=yield
+			.footer
+				Blah

@@ -1,0 +1,6 @@
+%form{:action => "/assets", :method => "post", :enctype => "multipart/form-data"}
+  .field
+    %label(for="asset_file") Choose file for upload
+    %input(type="file" name="asset_file" id="asset_file")
+  .actions
+    %button{:type => "submit"} Upload file
