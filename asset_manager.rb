@@ -1,25 +1,11 @@
 require 'rubygems'
 require 'sinatra'
 
-require 'activesupport'
-require 'activerecord'
-require 'paperclip'
-require 'haml'
+require 'config/boot'
 
-APP_ROOT   = File.dirname(__FILE__)
-RAILS_ROOT = APP_ROOT
-
-$:<< "#{APP_ROOT}/lib"
-require 'asset'
-require 'mutable_file'
-
-ActiveRecord::Base.establish_connection({
-  :adapter => "sqlite3",
-  :database => "db/grid_assets.sqlite3"
-})
-
-ActiveRecord::Base.logger = Logger.new(STDOUT)
-
+put "/assets/:id" do |id|
+  "UPDATE ASSET NUMBER #{id}"
+end
 
 post "/assets" do
   file = params[:asset_file][:tempfile]
@@ -37,7 +23,12 @@ end
 
 get "/assets" do
   @assets = Asset.all
-  haml :index
+  
+  if params[:format] == "json"
+    @assets.to_json
+  else
+    haml :"assets/index"
+  end
 end
 
 get "/" do

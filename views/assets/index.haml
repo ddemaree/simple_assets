@@ -1,0 +1,10 @@
+%h1 All assets
+
+#assets_grid.group
+  - @assets.each do |asset|
+    %div.asset(id="asset_#{asset.id}")
+      .img
+        %a(href="/assets/#{asset.id}/edit")
+          %img{:src => asset.asset.url(:small)}
+      .actions
+        %a(href="javascript:void(0)") Delete
