@@ -1,10 +1,10 @@
-%h1 All assets
-
 #assets_grid.group
-  - @assets.each do |asset|
-    %div.asset(id="asset_#{asset.id}")
-      .img
-        %a(href="/assets/#{asset.id}/edit")
-          %img{:src => asset.asset.url(:small)}
-      .actions
-        %a(href="javascript:void(0)") Delete
+  - @assets.in_groups_of(5,false).each do |asset_group|
+    - asset_group.each do |asset|
+      %div.asset(id="asset_#{asset.id}")
+        .liner
+          .img
+            %a(href="/assets/#{asset.id}/edit")
+              %img{:src => asset.asset.url(:medium)}
+          .actions
+            %a(href="javascript:void(0)") Delete

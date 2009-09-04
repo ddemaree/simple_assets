@@ -25,6 +25,7 @@ get "/assets" do
   @assets = Asset.all
   
   if params[:format] == "json"
+    content_type "application/json"
     @assets.to_json
   else
     haml :"assets/index"
@@ -32,5 +33,5 @@ get "/assets" do
 end
 
 get "/" do
-  redirect "/assets"
+  haml :main_index
 end
