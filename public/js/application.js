@@ -1,8 +1,8 @@
-Bjorn.Router.connect("assets", function(p){
+Bjorn.Router.connect("/assets", function(p){
 	template = $('.prototype').get(0).innerHTML;
 	console.log(template);
 	
-	$.get("assets", {format:"json"}, function(assets, textStatus){
+	$.get("/assets", {format:"json"}, function(assets, textStatus){
 		for(i = 0, l = assets.length; i < l; i++){
 			asset = assets[i]
 			
@@ -18,13 +18,13 @@ Bjorn.Router.connect("assets", function(p){
 	}, "json");
 });
 
-Bjorn.Router.connect("edit_asset/:id", function(p){
-	$.get("assets/"+ p.id, {}, function(asset, textStatus){
+Bjorn.Router.connect("/edit_asset/:id", function(p){
+	$.get("/assets/"+ p.id, {}, function(asset, textStatus){
 		console.log(asset);
 	});
 })
 
 $(document).ready(function(){
-	Bjorn.Router.invoke("assets");
+	Bjorn.Router.invoke("/assets");
 	new Bjorn.AnchorObserver;
 });
