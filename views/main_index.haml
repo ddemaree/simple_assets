@@ -1,10 +1,14 @@
-%a(href="#/assets?format=json") Gimme JSON
 #assets_grid.group
-  .prototype(style="display:none")
-    .asset
-      .liner
-        .img
-          %a(href="#/edit_asset/ASSET_ID")
-            %img(src="ASSET_URL" alt="ASSET_FILENAME")
-        .actions
-          %a(href="javascript:void(0)") Delete
+  .asset-editor(style="display:none")
+    %form(action="/assets/" method="post" enctype="multipart/form-data")
+      %input(type="hidden" name="_method" value="put")
+      .preview
+      %fieldset.attributes
+        .field
+          %label(for="asset_file_name") File name
+          %input(id="asset_file_name" type="text" name="asset[file_name]")
+        .field
+          %label(for="asset_file") Upload file
+          %input(id="asset_file" name="asset_file" type="file")
+      .actions
+        %button(type="submit") Save changes

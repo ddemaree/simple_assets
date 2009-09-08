@@ -1,28 +1,48 @@
-Bjorn.Router.connect("/assets", function(p){
-	template = $('.prototype').get(0).innerHTML;
-	console.log(template);
-	
-	$.get("/assets", {format:"json"}, function(assets, textStatus){
-		for(i = 0, l = assets.length; i < l; i++){
-			asset = assets[i]
-			
-			output = template;
-			output = output.replace(/ASSET_FILENAME/g, asset.file_name);
-			output = output.replace(/ASSET_URL/g, asset.url.medium);
-			output = output.replace(/ASSET_ID/g, asset.id);
-			
-			newNode = $(output);
-			$('#assets_grid').append(newNode);
+AssetManager = {
+	createElement:function(asset){
+		var wrapper = $('<div class="asset">\n\t<div class="liner">\n\t\t<div class="img"></div>\n\t\t<div class="actions"></div>\n\t</div>\n</div>');
+		
+		try {
+			wrapper.get(0).setAttribute("id", "asset_" + asset.id);
+			wrapper.data("asset", asset);
+		}
+		catch(err){
+			console.log(err);
 		}
 		
+		wrapper.data("asset", asset);
+		
+		var img = new Image();
+		img.src = asset.url.medium;
+		$('.img', wrapper).html(img);
+		$('.img img', wrapper).wrap("<a href='#/edit_asset/"+asset.id+"'></a>");
+		
+		return wrapper;
+	}
+}
+
+Bjorn.Router.connect("/assets", function(p){
+	$.get("/assets", {format:"json"}, function(assets, textStatus){
+		for(i = 0, l = assets.length; i < l; i++){
+			var asset = assets[i]
+			var newAsset = AssetManager.createElement(asset);
+			$('#assets_grid').append(newAsset);
+		}
 	}, "json");
 });
 
 Bjorn.Router.connect("/edit_asset/:id", function(p){
-	$.get("/assets/"+ p.id, {}, function(asset, textStatus){
-		console.log(asset);
-	});
-})
+	var assetObj = $('#asset_' + p.id).data("asset");
+	var editor = $('.asset-editor');
+	
+	$('input#asset_file_name', editor).val(assetObj.file_name);
+	
+	var img = new Image();
+	img.src = assetObj.url.medium;
+	
+	$('.preview', editor).html("").append(img);
+	editor.show("slow");
+});
 
 $(document).ready(function(){
 	Bjorn.Router.invoke("/assets");
