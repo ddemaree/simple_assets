@@ -21,6 +21,12 @@ get "/assets/new" do
   haml :new
 end
 
+get "/assets/:id" do |id|
+  @asset = Asset.find(id)
+  content_type "application/json"
+  @asset.to_json
+end
+
 get "/assets" do
   @assets = Asset.all
   

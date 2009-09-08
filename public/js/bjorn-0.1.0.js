@@ -1,0 +1,10 @@
+
+var Bjorn={VERSION:'0.1.0'};function $A(iterable){if(!iterable)return[];if(iterable.toArray)return iterable.toArray();var length=iterable.length||0,results=new Array(length);while(length--)results[length]=iterable[length];return results;}
+Object.prototype.is_a=function(klass){return!!(this.constructor==klass);};Function.prototype.bind=function(){if(arguments.length<2&&(typeof arguments[0]=="undefined"))return this;var __method=this,args=$A(arguments),object=args.shift();return function(){return __method.apply(object,args.concat($A(arguments)))}};Bjorn.Router={_routes:[],connect:function(path,callback){var keys=[];if(path.is_a(RegExp)){this._routes.push([path,callback,keys]);}
+else if(path.is_a(String)){var rs=path.replace(/(:\w+)/gi,function(e){keys.push(e.slice(1));return"([^/?&#]+)";});var pattern=new RegExp("^"+rs+"$");this._routes.push([pattern,callback,keys]);}},invoke:function(path,memo){var matchingRoute,matches;for(var i=0,length=this._routes.length;i<length;i++){var r=this._routes[i];var pattern=r[0];if(matches=pattern.exec(path)){matchingRoute=r;break;}};if(matchingRoute){var callback=matchingRoute[1];var namedParams=matchingRoute[2];var params={};params.memo=(memo||{});matches=matches.slice(1);if(namedParams.length>0){for(var ii=0,length=namedParams.length;ii<length;ii++)
+params[namedParams[ii]]=matches[ii];}
+params.matchedPath=path;callback(params);}}};$B=Bjorn.Router.connect.bind(Bjorn.Router);Bjorn.AnchorObserver=function(callback){if(callback&&callback.is_a(Function))
+this.onAnchorChanged=callback.bind(this);else
+this.onAnchorChanged=this._onAnchorChanged;setInterval(this.poll.bind(this),(0.1*1000));};Bjorn.AnchorObserver.prototype={lastAnchor:'',_onAnchorChanged:function(changes){Bjorn.Router.invoke(changes.to);},poll:function(){var anchor=(window.location.hash||"").slice(1);if(anchor!=this.lastAnchor)
+this.onAnchorChanged({from:this.lastAnchor,to:anchor});this.lastAnchor=anchor;}}
+$_B=Bjorn;$_R=Bjorn.Router;

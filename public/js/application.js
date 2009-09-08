@@ -1,66 +1,30 @@
-
-var AnchorObserver = {
-  enabled:  true,
-  interval: 0.1
-};
-
-document.observe("anchor:changed", function(e){
-	var newAnchor = e.memo.to;
+Bjorn.Router.connect("assets", function(p){
+	template = $('.prototype').get(0).innerHTML;
+	console.log(template);
 	
-	if(e.memo.to.match(/^\/assets/)) {
-		console.log("Loading " + newAnchor);
-		AssetManager.refresh(newAnchor);
-	}
+	$.get("assets", {format:"json"}, function(assets, textStatus){
+		for(i = 0, l = assets.length; i < l; i++){
+			asset = assets[i]
+			
+			output = template;
+			output = output.replace(/ASSET_FILENAME/g, asset.file_name);
+			output = output.replace(/ASSET_URL/g, asset.url.medium);
+			output = output.replace(/ASSET_ID/g, asset.id);
+			
+			newNode = $(output);
+			$('#assets_grid').append(newNode);
+		}
 		
-})
-
-var AssetManager = {
-	template: new Template("<div class='asset' id='asset_#{id}'><div class='liner'> \n\t<div class='img'><img src='#{url.small}'></div> \n\t<div class='actions'>BLAH</div> \n</div></div>"),
-	insert: function(asset){
-		html = this.template.evaluate(asset);
-		$('assets_grid').insert(html);
-	},
-	resizeGrid: function(){
-		console.log("Need to implement")
-	},
-	refresh: function(uri){
-		new Ajax.Request(uri, {
-			asynchronous: true,
-			method: 'get',
-			evalJSON: true,
-			onSuccess: function(req, json_obj){
-				$('assets_grid').update('');
-				assets = req.responseJSON;				
-				assets.each(function(asset){
-					this.insert(asset);
-				}.bind(AssetManager))
-			},
-			onFailure: function(req){
-				alert("FAIL")
-			}
-		})
-	}
-};
-
-Event.observe(window, "resize", function(event) {
-  document.fire("viewport:resized");
+	}, "json");
 });
 
-document.observe("viewport:resized", AssetManager.resizeGrid.bind(AssetManager));
+Bjorn.Router.connect("edit_asset/:id", function(p){
+	$.get("assets/"+ p.id, {}, function(asset, textStatus){
+		console.log(asset);
+	});
+})
 
-document.observe("dom:loaded", function() {
-  var lastAnchor = "";
-
-	function poll() {
-		var anchor = (window.location.hash || "").slice(1);
-		if (anchor != lastAnchor) {
-			document.fire("anchor:changed", { to: anchor, from: lastAnchor });
-			lastAnchor = anchor;
-		}
-	}
-
-	if (AnchorObserver.enabled)
-		setInterval(poll, AnchorObserver.interval * 1000);
-	
-	AssetManager.resizeGrid();
+$(document).ready(function(){
+	Bjorn.Router.invoke("assets");
+	new Bjorn.AnchorObserver;
 });
